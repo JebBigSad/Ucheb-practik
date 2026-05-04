@@ -1,0 +1,58 @@
+/* Планшеты */
+@media (max-width: 768px) {
+    .content {
+        padding: 20px;
+    }
+    
+    .nav-btn {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+    }
+    
+    .digital-clock {
+        font-size: 2.5rem;
+        padding: 20px;
+    }
+    
+    .calc-btn {
+        padding: 15px;
+        font-size: 1.2rem;
+    }
+}
+
+/* Мобильные телефоны */
+@media (max-width: 480px) {
+    .header h1 {
+        font-size: 1.4rem;
+    }
+    
+    .nav {
+        flex-direction: column;
+    }
+    
+    .nav-btn {
+        width: 100%;
+    }
+    
+    .calc-buttons {
+        gap: 8px;
+    }
+    
+    .calc-btn {
+        padding: 12px;
+        font-size: 1rem;
+    }
+    
+    .game-board {
+        gap: 6px;
+    }
+    
+    .digital-clock {
+        font-size: 1.8rem;
+        min-width: auto;
+    }
+    
+    .weather-search {
+        flex-direction: column;
+    }
+}

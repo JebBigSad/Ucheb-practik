@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ucheb-practik — всё в одном</title>
+    
+    <!-- Подключение стилей -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/modules.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Шапка / Навигация -->
+        <header class="header">
+            <h1>📱 Ucheb-practik</h1>
+            <nav class="nav">
+                <button class="nav-btn active" data-module="calculator">🧮 Калькулятор</button>
+                <button class="nav-btn" data-module="game">🎮 Крестики-нолики</button>
+                <button class="nav-btn" data-module="calendar">📅 Календарь</button>
+                <button class="nav-btn" data-module="clock">🕒 Часы</button>
+                <button class="nav-btn" data-module="weather">🌦 Погода</button>
+            </nav>
+        </header>
+
+        <!-- Основной контент (модули) -->
+        <main class="content">
+            <div id="calculator" class="module active-module">
+                <!-- Калькулятор будет загружен динамически или прописан здесь -->
+            </div>
+            <div id="game" class="module">
+                <!-- Игра -->
+            </div>
+            <div id="calendar" class="module">
+                <!-- Календарь -->
+            </div>
+            <div id="clock" class="module">
+                <!-- Часы -->
+            </div>
+            <div id="weather" class="module">
+                <!-- Погода -->
+            </div>
+        </main>
+
+        <!-- Подвал -->
+        <footer class="footer">
+            <p>Учебная практика УП.02 | 2026</p>
+        </footer>
+    </div>
+
+    <!-- Подключение JavaScript -->
+    <script src="js/utils/helpers.js"></script>
+    <script src="js/modules/calculator.js"></script>
+    <script src="js/modules/tictactoe.js"></script>
+    <script src="js/modules/calendar.js"></script>
+    <script src="js/modules/clock.js"></script>
+    <script src="js/modules/weather.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
