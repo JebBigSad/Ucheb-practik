@@ -1,6 +1,6 @@
 let currentInput = '0';
 let previousInput = '';
-let operation = null;
+let currentOperation = null;
 
 function updateDisplay() {
     const display = document.getElementById('calcDisplay');
@@ -17,20 +17,22 @@ function handleNumber(num) {
 }
 
 function handleOperator(op) {
-    if (operation !== null) calculate();
+    if (currentOperation !== null) calculate();
     previousInput = currentInput;
-    operation = op;
+    currentOperation = op;
     currentInput = '0';
 }
 
-function calculate() {
+async function calculate() {
+    if (currentOperation === null || previousInput === '') return;
+    
     let result;
     const prev = parseFloat(previousInput);
     const curr = parseFloat(currentInput);
     
     if (isNaN(prev) || isNaN(curr)) return;
     
-    switch (operation) {
+    switch (currentOperation) {
         case '+': result = prev + curr; break;
         case '-': result = prev - curr; break;
         case '*': result = prev * curr; break;
@@ -38,30 +40,45 @@ function calculate() {
             if (curr === 0) {
                 currentInput = 'Ошибка';
                 updateDisplay();
+                currentOperation = null;
+                previousInput = '';
                 return;
             }
-            result = prev / curr; 
+            result = prev / curr;
             break;
         default: return;
     }
     
-    currentInput = result.toString();
-    operation = null;
+    const expression = `${prev} ${currentOperation} ${curr}`;
+    const resultStr = result.toString();
+    
+    currentInput = resultStr;
+    currentOperation = null;
     previousInput = '';
     updateDisplay();
+    
+    // Сохраняем в БД
+    if (window.API && window.API.saveCalculation) {
+        console.log('��� Сохраняем вычисление:', expression, '=', resultStr);
+        await window.API.saveCalculation(expression, resultStr);
+    }
 }
 
 function clearCalculator() {
     currentInput = '0';
     previousInput = '';
-    operation = null;
+    currentOperation = null;
     updateDisplay();
 }
 
 function initCalculator() {
     const calculatorDiv = document.getElementById('calculator');
-    if (!calculatorDiv) return;
+    if (!calculatorDiv) {
+        console.error('❌ Элемент calculator не найден');
+        return;
+    }
     
+    // Принудительно заполняем HTML калькулятора
     calculatorDiv.innerHTML = `
         <div class="calculator">
             <div class="calc-display" id="calcDisplay">0</div>
@@ -87,6 +104,7 @@ function initCalculator() {
         </div>
     `;
     
+    // Добавляем обработчики
     document.querySelectorAll('[data-number]').forEach(btn => {
         btn.addEventListener('click', () => handleNumber(btn.dataset.number));
     });
@@ -100,6 +118,8 @@ function initCalculator() {
     
     const clearBtn = document.querySelector('[data-action="clear"]');
     if (clearBtn) clearBtn.addEventListener('click', clearCalculator);
+    
+    console.log('✅ Калькулятор отрисован и готов к работе');
 }
 
 window.initCalculator = initCalculator;

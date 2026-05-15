@@ -1,6 +1,5 @@
-// OpenWeatherMap API configuration
-const API_KEY = '4a69cc088dcd8bf1ffe068706f059781';
-const BASE_URL = 'https://api.openweathermap.org/data/2.5/weather';
+// Альтернативный API погоды (wttr.in) - работает без ключа и не блокируется
+// Обновлено: использует прокси для обхода CORS
 
 async function fetchWeather(city) {
     if (!city) return;
@@ -8,72 +7,90 @@ async function fetchWeather(city) {
     const weatherResult = document.getElementById('weatherResult');
     if (!weatherResult) return;
     
-    weatherResult.innerHTML = '⏳ Загрузка данных с OpenWeatherMap...';
+    weatherResult.innerHTML = '⏳ Загрузка данных о погоде...';
     
     try {
-        const url = `${BASE_URL}?q=${encodeURIComponent(city)}&units=metric&lang=ru&appid=${API_KEY}`;
-        console.log('Запрос к API:', url.replace(API_KEY, 'HIDDEN'));
+        // Используем CORS-прокси для обхода блокировок
+        const url = `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://wttr.in/${encodeURIComponent(city)}?format=j1&lang=ru`)}`;
+        console.log('Запрос к API через прокси:', url);
         
         const response = await fetch(url);
         
         if (!response.ok) {
-            if (response.status === 401) {
-                throw new Error('Неверный API ключ');
-            } else if (response.status === 404) {
-                throw new Error(`Город "${city}" не найден`);
-            } else {
-                throw new Error(`Ошибка API: ${response.status}`);
-            }
+            throw new Error(`Ошибка API: ${response.status}`);
         }
         
         const data = await response.json();
-        displayWeather(data);
+        displayWeather(data, city);
     } catch (error) {
         console.error('Ошибка при запросе погоды:', error);
-        weatherResult.innerHTML = `
-            <div class="weather-card" style="background: #ef4444;">
-                <h3>❌ Ошибка</h3>
-                <p>${error.message}</p>
-            </div>
-        `;
+        showDemoWeather(city);
     }
 }
 
-function displayWeather(data) {
+function displayWeather(data, cityName) {
     const weatherResult = document.getElementById('weatherResult');
     
-    const temp = Math.round(data.main.temp);
-    const feelsLike = Math.round(data.main.feels_like);
-    const humidity = data.main.humidity;
-    const pressure = data.main.pressure;
-    const windSpeed = Math.round(data.wind.speed * 3.6);
-    const windDeg = data.wind.deg;
-    const description = data.weather[0].description;
-    const icon = data.weather[0].icon;
-    const cityName = data.name;
-    const country = data.sys.country;
-    
-    const windDirections = ['северный', 'северо-восточный', 'восточный', 'юго-восточный', 'южный', 'юго-западный', 'западный', 'северо-западный'];
-    const windDirection = windDirections[Math.round(windDeg / 45) % 8];
-    const iconUrl = `https://openweathermap.org/img/w/${icon}.png`;
-    
-    weatherResult.innerHTML = `
-        <div class="weather-card">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <h3>📍 ${cityName}, ${country}</h3>
-                <img src="${iconUrl}" alt="${description}" style="width: 50px; height: 50px;">
+    try {
+        const current = data.current_condition[0];
+        const temp = current.temp_C;
+        const feelsLike = current.FeelsLikeC;
+        const humidity = current.humidity;
+        const pressure = current.pressure;
+        const windSpeed = current.windspeedKmph;
+        const desc = current.weatherDesc[0].value;
+        
+        let weatherIcon = '';
+        if (desc.includes('солнечно') || desc.includes('ясно')) weatherIcon = '☀️';
+        else if (desc.includes('облачно')) weatherIcon = '☁️';
+        else if (desc.includes('дождь')) weatherIcon = '🌧️';
+        else if (desc.includes('снег')) weatherIcon = '❄️';
+        else weatherIcon = '🌡️';
+        
+        weatherResult.innerHTML = `
+            <div class="weather-card">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h3>📍 ${cityName.charAt(0).toUpperCase() + cityName.slice(1)}</h3>
+                    <div style="font-size: 3rem;">${weatherIcon}</div>
+                </div>
+                <div class="weather-temp">${temp}°C</div>
+                <div>🌡 Ощущается как: ${feelsLike}°C</div>
+                <div>☁️ ${desc}</div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px;">
+                    <div>💧 Влажность: ${humidity}%</div>
+                    <div>📊 Давление: ${pressure} hPa</div>
+                    <div>💨 Ветер: ${windSpeed} км/ч</div>
+                </div>
+                <small style="display: block; margin-top: 12px; color: rgba(255,255,255,0.7);">
+                    Данные: wttr.in
+                </small>
             </div>
-            <div class="weather-temp">${temp}°C</div>
-            <div>🌡 Ощущается как: ${feelsLike}°C</div>
-            <div>☁️ ${description.charAt(0).toUpperCase() + description.slice(1)}</div>
+        `;
+        
+        // 💾 Сохраняем в БД, если API доступен
+        if (window.API && temp) {
+            window.API.saveWeatherQuery(cityName, temp, humidity, desc);
+        }
+    } catch (error) {
+        console.error('Ошибка отображения погоды:', error);
+        showDemoWeather(cityName);
+    }
+}
+
+function showDemoWeather(city) {
+    const weatherResult = document.getElementById('weatherResult');
+    weatherResult.innerHTML = `
+        <div class="weather-card" style="background: #3b82f6;">
+            <h3>📍 ${city}</h3>
+            <div class="weather-temp">+18°C</div>
+            <div>☁️ Облачно, без осадков</div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px;">
-                <div>💧 Влажность: ${humidity}%</div>
-                <div>📊 Давление: ${pressure} hPa</div>
-                <div>💨 Ветер: ${windSpeed} км/ч</div>
-                <div>🧭 Направление: ${windDirection}</div>
+                <div>💧 Влажность: 65%</div>
+                <div>📊 Давление: 1013 hPa</div>
+                <div>💨 Ветер: 5 км/ч</div>
             </div>
             <small style="display: block; margin-top: 12px; color: rgba(255,255,255,0.7);">
-                Данные: OpenWeatherMap
+                🔧 Демо-режим (API временно недоступен)
             </small>
         </div>
     `;
