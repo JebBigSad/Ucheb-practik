@@ -1,6 +1,3 @@
-// Альтернативный API погоды (wttr.in) - работает без ключа и не блокируется
-// Обновлено: использует прокси для обхода CORS
-
 async function fetchWeather(city) {
     if (!city) return;
     
@@ -10,7 +7,6 @@ async function fetchWeather(city) {
     weatherResult.innerHTML = '⏳ Загрузка данных о погоде...';
     
     try {
-        // Используем CORS-прокси для обхода блокировок
         const url = `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://wttr.in/${encodeURIComponent(city)}?format=j1&lang=ru`)}`;
         console.log('Запрос к API через прокси:', url);
         

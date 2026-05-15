@@ -12,14 +12,11 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static('.'));
 
-// ============================================
-// ПОДКЛЮЧЕНИЕ К POSTGRESQL
-// ============================================
 const pool = new Pool({
     user: 'postgres',
     host: 'localhost',
     database: 'All_in_one',
-    password: 'jebbigsad',     // ⚠️ ЗАМЕНИТЕ НА ВАШ ПАРОЛЬ
+    password: 'jebbigsad',
     port: 5432,
 });
 
@@ -33,9 +30,7 @@ pool.connect((err, client, release) => {
     }
 });
 
-// ============================================
-// API ЭНДПОИНТЫ
-// ============================================
+
 
 // 1. Получить все вычисления пользователя
 app.get('/api/calculator/:userId', async (req, res) => {

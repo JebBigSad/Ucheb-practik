@@ -1,21 +1,16 @@
-// Главный файл управления приложением Ucheb-practik
-
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM загружен, инициализация приложения...');
     
     const navBtns = document.querySelectorAll('.nav-btn');
     const modules = document.querySelectorAll('.module');
     
-    // Функция переключения между модулями
     function switchModule(moduleId) {
         console.log(`Переключение на модуль: ${moduleId}`);
         
-        // Скрыть все модули
         modules.forEach(module => {
             module.classList.remove('active-module');
         });
         
-        // Показать выбранный модуль
         const activeModule = document.getElementById(moduleId);
         if (activeModule) {
             activeModule.classList.add('active-module');
@@ -23,7 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error(`Модуль с id "${moduleId}" не найден`);
         }
         
-        // Обновить активную кнопку
         navBtns.forEach(btn => {
             btn.classList.remove('active');
         });
@@ -34,15 +28,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    // Добавляем обработчики на все кнопки навигации
     navBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             const moduleId = btn.dataset.module;
             switchModule(moduleId);
         });
     });
-    
-    // Инициализация всех модулей с небольшой задержкой
+
     setTimeout(() => {
         console.log('Инициализация модулей...');
         

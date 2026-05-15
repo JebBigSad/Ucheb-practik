@@ -52,7 +52,6 @@ async function handleCellClick(index) {
     if (checkWin()) {
         if (gameStatusElement) gameStatusElement.innerText = `🏆 Игрок ${currentPlayer} победил! 🏆`;
         gameActive = false;
-        // ��� СОХРАНЯЕМ ПОБЕДУ
         if (window.API && window.API.saveGame) {
             console.log('📤 Сохраняем игру: победитель', currentPlayer, 'ходов:', movesCount);
             await window.API.saveGame(currentPlayer, movesCount);
@@ -63,7 +62,6 @@ async function handleCellClick(index) {
     if (checkDraw()) {
         if (gameStatusElement) gameStatusElement.innerText = `🤝 Ничья! 🤝`;
         gameActive = false;
-        // ��� СОХРАНЯЕМ НИЧЬЮ
         if (window.API && window.API.saveGame) {
             console.log('📤 Сохраняем игру: ничья, ходов:', movesCount);
             await window.API.saveGame('draw', movesCount);

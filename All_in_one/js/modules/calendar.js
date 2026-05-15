@@ -69,7 +69,6 @@ async function updateCalendar() {
         day.addEventListener('click', () => selectDate(day.dataset.date));
     });
     
-    // Если нет выбранной даты, выбираем сегодня
     if (!selectedDate) {
         const todayStr = new Date().toISOString().split('T')[0];
         selectDate(todayStr);
@@ -82,7 +81,6 @@ async function selectDate(dateStr) {
     selectedDate = dateStr;
     document.getElementById('selectedDateDisplay').innerText = `📅 ${dateStr}`;
     
-    // Загружаем заметки за эту дату
     if (window.API && window.API.getNotesByDate) {
         const notes = await window.API.getNotesByDate(dateStr);
         displayNotes(notes);
@@ -126,7 +124,6 @@ async function saveCurrentNote() {
         await window.API.saveNote(selectedDate, title || 'Без заголовка', content);
         document.getElementById('noteTitle').value = '';
         document.getElementById('noteContent').value = '';
-        // Обновляем список заметок
         const notes = await window.API.getNotesByDate(selectedDate);
         displayNotes(notes);
         alert('✅ Заметка сохранена!');

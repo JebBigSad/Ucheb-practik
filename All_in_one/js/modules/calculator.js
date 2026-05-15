@@ -59,7 +59,7 @@ async function calculate() {
     
     // Сохраняем в БД
     if (window.API && window.API.saveCalculation) {
-        console.log('��� Сохраняем вычисление:', expression, '=', resultStr);
+        console.log('Сохраняем вычисление:', expression, '=', resultStr);
         await window.API.saveCalculation(expression, resultStr);
     }
 }
